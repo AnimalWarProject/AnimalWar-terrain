@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/maps")
+@RequestMapping("/api/terrains")
 public class TerrainController {
 
    private final TerrainService terrainService;

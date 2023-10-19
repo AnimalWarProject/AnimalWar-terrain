@@ -24,7 +24,7 @@ public class TopicConfig {
     }
 
     @Bean
-    public NewTopic mapRequestTopic() {
+    public NewTopic terrainRequestTopic() {
         return new NewTopic("terrain-request-topic", 1, (short) 1);
 
     }
