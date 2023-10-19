@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class TerrainProducer {
     private final KafkaTemplate<String, TerrainResponseDto> kafkaTemplate;
 
-    public void sendTerrainDto(TerrainResponseDto terrainResponseDto) {
+    public void sendTerrainResponseDto(TerrainResponseDto terrainResponseDto) {
         kafkaTemplate.send("terrain-response-topic", terrainResponseDto);
     }
 }

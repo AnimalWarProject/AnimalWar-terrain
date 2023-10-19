@@ -12,4 +12,5 @@ import java.util.UUID;
 public class TerrainRequest {
     private UUID userUUID;
     private int gold;
+    private boolean freeRequest;
 }

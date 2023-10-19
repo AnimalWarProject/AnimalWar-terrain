@@ -1,6 +1,6 @@
 package com.example.animalwarterrain.controller;
 
-import com.example.animalwarterrain.domain.entity.Terrain;
+
 import com.example.animalwarterrain.domain.request.TerrainRequest;
 import com.example.animalwarterrain.service.TerrainService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class TerrainController {
    private final TerrainService terrainService;
 
     @PostMapping("/generate")
-    public Terrain generateMap(@RequestBody TerrainRequest request) {
-        return terrainService.generateRandomMap(request.getUserUUID(), request.getGold());
+    public void generateRandomTerrain(@RequestBody TerrainRequest terrainRequest) {
+        terrainService.generateRandomTerrain(terrainRequest);
     }
 }

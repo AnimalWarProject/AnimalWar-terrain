@@ -16,7 +16,7 @@ public class TerrainConsumer {
 
     @KafkaListener(topics = "terrain-request-topic", groupId = "animalwar-consumer")
     public void consumeTerrainRequest(ConsumerRecord<String, TerrainRequest> record) {
-        TerrainRequest request = record.value();
-        terrainService.generateRandomTerrain(request);
+        TerrainRequest terrainRequest = record.value();
+        terrainService.generateRandomTerrain(terrainRequest);
     }
 }
