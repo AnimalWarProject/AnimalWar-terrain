@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TerrainProducer {
+public class ResultTerrainProducer {
     private final KafkaTemplate<String, TerrainResponseDto> kafkaTemplate;
 
     public void sendTerrainResponseDto(TerrainResponseDto terrainResponseDto) {
