@@ -11,6 +11,4 @@ import java.util.UUID;
 @NoArgsConstructor
 public class TerrainRequest {
     private UUID userUUID;
-    private int gold;
-    private boolean freeRequest;
 }

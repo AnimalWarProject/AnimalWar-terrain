@@ -10,9 +10,5 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TerrainResponseDto {
     private UUID userUUID;
-    private int land;
-    private int sea;
-    private int mountain;
     private LandForm landForm;
-    private int goldDeduction;
 }

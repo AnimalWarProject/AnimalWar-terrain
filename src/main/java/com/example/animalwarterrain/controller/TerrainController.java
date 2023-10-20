@@ -22,4 +22,5 @@ public class TerrainController {
     public void generateRandomTerrain(@RequestBody TerrainRequest terrainRequest) {
         terrainService.generateRandomTerrain(terrainRequest);
     }
+
 }
