@@ -15,16 +15,16 @@ import java.util.UUID;
 @Setter
 public class Terrain {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long terrainId;
 
     private UUID userUUID;
     private int sea;
     private int mountain;
     private int land;
-
-    @OneToMany(mappedBy = "terrain")
-    private List<Tile> tiles;
+//
+//    @OneToMany(mappedBy = "terrain")
+//    private List<Tile> tiles;
 
     private LandForm landForm;
 

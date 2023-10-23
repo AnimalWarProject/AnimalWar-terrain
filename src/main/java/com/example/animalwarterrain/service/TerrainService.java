@@ -10,6 +10,9 @@ import com.example.animalwarterrain.kafka.ResultTerrainProducer;
 import com.example.animalwarterrain.repository.TerrainRepository;
 import com.example.animalwarterrain.repository.TileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.support.converter.JsonMessageConverter;
+import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class TerrainService {
     private final ResultTerrainProducer resultTerrainProducer;
     private final TerrainRepository terrainRepository;
     private final TileRepository tileRepository;
+
 
     public void generateRandomTerrain(UUID userUUID) {
         Random rand = new Random();

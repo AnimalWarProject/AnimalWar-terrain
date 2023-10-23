@@ -6,9 +6,11 @@ import lombok.Data;
 
 import java.util.UUID;
 
-@Data
-@AllArgsConstructor
-public class TerrainResponseDto {
-    private UUID userUUID;
-    private LandForm landForm;
+
+public record TerrainResponseDto(
+ UUID userUUID,
+ LandForm landForm
+
+        ) {
+
 }
