@@ -3,6 +3,7 @@ package com.example.animalwarterrain.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,11 +18,13 @@ public class Terrain {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long terrainId;
 
+    private UUID userUUID;
     private int sea;
     private int mountain;
     private int land;
 
-    private UUID userUUID;
+    @OneToMany(mappedBy = "terrain")
+    private List<Tile> tiles;
 
     private LandForm landForm;
 
