@@ -82,7 +82,7 @@ public class TerrainService {
         //        X 1  y 0~10 이라고 가정
         List<TileInfo> tileInfos = batchRequest.tileInfos();
 
-        for(int i=0;i<tiles.size();i++){
+        for(int i=0;i<tileInfos.size();i++){
             Tile tile = tiles.get(i);
             TileInfo tileInfo = tileInfos.get(i);
 

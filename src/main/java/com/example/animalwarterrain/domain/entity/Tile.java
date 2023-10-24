@@ -1,5 +1,6 @@
 package com.example.animalwarterrain.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
@@ -23,6 +24,7 @@ public class Tile {
 
     private Long typeId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Terrain terrain;
 

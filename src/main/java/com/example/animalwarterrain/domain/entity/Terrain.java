@@ -26,6 +26,7 @@ public class Terrain {
 //    @OneToMany(mappedBy = "terrain")
 //    private List<Tile> tiles;
 
+    @Enumerated(value = EnumType.STRING)
     private LandForm landForm;
 
 
