@@ -13,7 +13,6 @@ public class GenerateTerrainConsumer {
 
     private final TerrainService terrainService;
 
-
     @KafkaListener(topics = "terrain-request-topic", groupId = "animalwar-consumer")
     public void consumeTerrainRequest(UUID userUUID) {
         terrainService.generateRandomTerrain(userUUID);
