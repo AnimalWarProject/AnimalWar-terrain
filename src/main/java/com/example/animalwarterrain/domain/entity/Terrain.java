@@ -29,6 +29,14 @@ public class Terrain {
     @Enumerated(value = EnumType.STRING)
     private LandForm landForm;
 
-
+    public static Terrain buildTerrain(UUID userUUID, int land, int sea, int mountain, LandForm landForm) {
+        return Terrain.builder()
+                .userUUID(userUUID)
+                .land(land)
+                .sea(sea)
+                .mountain(mountain)
+                .landForm(landForm)
+                .build();
+    }
 
 }
