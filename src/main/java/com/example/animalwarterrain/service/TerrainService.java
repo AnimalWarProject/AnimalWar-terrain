@@ -75,7 +75,8 @@ public class TerrainService {
 
         // 데이터 정렬이  X 0  y 0~10
         //        X 1  y 0~10 이라고 가정
-        List<Tile> tiles = tileRepository.findAllByTerrain_UserUUIDOrderByTileIdAsc(batchRequest.uuid());
+        List<Tile> tiles = tileRepository.findTilesByUUID(batchRequest.uuid())
+                .orElseThrow(()->new RuntimeException("No UUID or Tile  Error"));
 
 
         // 데이터 정렬이  X 0  y 0~10
