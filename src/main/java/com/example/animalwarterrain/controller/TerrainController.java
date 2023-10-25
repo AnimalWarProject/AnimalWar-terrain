@@ -1,7 +1,7 @@
 package com.example.animalwarterrain.controller;
 
 
-import com.example.animalwarterrain.domain.dto.BatchRequest;
+import com.example.animalwarterrain.domain.dto.PlaceRequest;
 import com.example.animalwarterrain.domain.dto.TerrainRequestDto;
 import com.example.animalwarterrain.domain.entity.Tile;
 import com.example.animalwarterrain.service.TerrainService;
@@ -27,8 +27,8 @@ public class TerrainController {
     }
 
     @PostMapping("/batch")
-    public List<Tile> batchTerrain(@RequestBody BatchRequest batchRequest){
-        return terrainService.batchTerrain(batchRequest);
+    public List<Tile> batchTerrain(@RequestBody PlaceRequest placeRequest){
+        return terrainService.batchTerrain(placeRequest);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.animalwarterrain.service;
 
 import com.example.animalwarterrain.domain.dto.BatchRequest;
+import com.example.animalwarterrain.domain.dto.PlaceRequest;
 import com.example.animalwarterrain.domain.dto.TerrainResponseDto;
 import com.example.animalwarterrain.domain.dto.TileInfo;
 import com.example.animalwarterrain.domain.entity.LandForm;
@@ -15,6 +16,7 @@ import org.springframework.kafka.support.converter.JsonMessageConverter;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -42,19 +44,18 @@ public class TerrainService {
 
         resultTerrainProducer.sendTerrainResponseDto(new TerrainResponseDto(userUUID, terrain.getLandForm()));
 
+        List<Tile> tiles = new ArrayList<>();
         //디폴트 타일 10*10  100개 세팅
         for(int i=0;i<10;i++){
             for(int j=0;j<10;j++){
-
-                // X, Y값만 넣어놓기
-                tileRepository.save(Tile.builder()
+                tiles.add(Tile.builder()
                         .x(i)
                         .y(j)
                         .terrain(terrain)
                         .build());
             }
         }
-
+        tileRepository.saveAll(tiles);
     }
 
     private LandForm determineLandForm(int land, int sea, int mountain) {
@@ -67,16 +68,16 @@ public class TerrainService {
         }
     }
 
-    public List<Tile> batchTerrain(BatchRequest batchRequest) {
+    public List<Tile> batchTerrain(PlaceRequest placeRequest) {
 
         // 데이터 정렬이  X 0  y 0~10
         //        X 1  y 0~10 이라고 가정
-        List<Tile> tiles = tileRepository.findTilesByUUID(batchRequest.uuid())
+        List<Tile> tiles = tileRepository.findTilesByUUID(placeRequest.uuid())
                 .orElseThrow(()->new RuntimeException("No UUID or Tile  Error"));
 
         // 데이터 정렬이  X 0  y 0~10
         //        X 1  y 0~10 이라고 가정
-        List<TileInfo> tileInfos = batchRequest.tileInfos();
+        List<TileInfo> tileInfos = placeRequest.tileInfos();
 
         for(int i=0;i<tileInfos.size();i++){
             Tile tile = tiles.get(i);

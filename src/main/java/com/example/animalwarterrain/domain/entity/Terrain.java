@@ -30,8 +30,7 @@ public class Terrain {
     private LandForm landForm;
 
     public static Terrain buildTerrain(UUID userUUID, int land, int sea, int mountain, LandForm landForm) {
-        return Terrain.builder()
-                .userUUID(userUUID)
+        return Terrain.builder().userUUID(userUUID)
                 .land(land)
                 .sea(sea)
                 .mountain(mountain)
