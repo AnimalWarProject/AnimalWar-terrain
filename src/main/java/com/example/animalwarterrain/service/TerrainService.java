@@ -34,13 +34,9 @@ public class TerrainService {
         int land = rand.nextInt(100);
         int sea = rand.nextInt(100 - land);
         int mountain = 100 - land - sea;
+        LandForm determinedLandForm = determineLandForm(land, sea, mountain);
 
-        Terrain terrain = new Terrain();
-        terrain.setUserUUID(userUUID);
-        terrain.setLand(land);
-        terrain.setSea(sea);
-        terrain.setMountain(mountain);
-        terrain.setLandForm(determineLandForm(land, sea, mountain));
+        Terrain terrain = Terrain.buildTerrain(userUUID, land, sea, mountain, determinedLandForm);
 
         terrain = terrainRepository.save(terrain);
 

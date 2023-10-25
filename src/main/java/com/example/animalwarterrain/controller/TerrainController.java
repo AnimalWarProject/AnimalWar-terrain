@@ -21,7 +21,7 @@ public class TerrainController {
 
    private final TerrainService terrainService;
 
-    @PostMapping("/generate")
+    @PostMapping("/")
     public void generateRandomTerrain(@RequestBody TerrainRequestDto request) {
         terrainService.generateRandomTerrain(request.uuid());
     }
