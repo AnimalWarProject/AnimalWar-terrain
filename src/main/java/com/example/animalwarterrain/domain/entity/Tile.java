@@ -1,20 +1,28 @@
 package com.example.animalwarterrain.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Table(name = "tiles")
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Tile {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long tileId;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "terrain_id", nullable = false)
+    private Terrain terrain;
+
+    @Enumerated(EnumType.STRING)
+    private LandForm landForm;
 
     private int x;
     private int y;
@@ -24,16 +32,10 @@ public class Tile {
 
     private Long typeId;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Terrain terrain;
 
-
-    public Tile updateTile(BuildType type, Long typeId){
-        this.type=type;
-        this.typeId = typeId;
-
-        return this;
+    public void updateLandForm(LandForm landForm) {
+        this.landForm = landForm;
     }
-
 }
+
+
