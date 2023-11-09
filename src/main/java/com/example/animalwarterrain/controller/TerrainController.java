@@ -1,9 +1,7 @@
 package com.example.animalwarterrain.controller;
 
 
-import com.example.animalwarterrain.domain.dto.PlaceRequest;
 import com.example.animalwarterrain.domain.dto.TerrainRequestDto;
-import com.example.animalwarterrain.domain.entity.Tile;
 import com.example.animalwarterrain.service.TerrainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

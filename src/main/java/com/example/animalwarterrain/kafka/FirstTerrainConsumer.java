@@ -9,12 +9,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class GenerateTerrainConsumer {
+public class FirstTerrainConsumer {
 
     private final TerrainService terrainService;
 
-    @KafkaListener(topics = "terrain-request-topic", groupId = "animalwar-consumer")
-    public void consumeTerrainRequest(UUID userUUID) {
-        terrainService.generateRandomTerrain(userUUID);
+    @KafkaListener(topics = "first-terrain-request-topic", groupId = "animalwar-terrain-group")
+    public void consumeFirstTerrainRequest(String userUUID) {
+        terrainService.firstTerrain(UUID.fromString(userUUID));
     }
 }

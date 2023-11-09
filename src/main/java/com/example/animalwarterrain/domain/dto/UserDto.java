@@ -14,7 +14,4 @@ public class UserDto {
     private int gold;
 
     private LandForm landForm;
-    private int land;
-    private int sea;
-    private int mountain;
 }

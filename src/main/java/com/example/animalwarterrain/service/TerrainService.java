@@ -1,25 +1,16 @@
 package com.example.animalwarterrain.service;
 
-import com.example.animalwarterrain.domain.dto.BatchRequest;
-import com.example.animalwarterrain.domain.dto.PlaceRequest;
 import com.example.animalwarterrain.domain.dto.TerrainResponseDto;
-import com.example.animalwarterrain.domain.dto.TileInfo;
 import com.example.animalwarterrain.domain.entity.LandForm;
 import com.example.animalwarterrain.domain.entity.Terrain;
 import com.example.animalwarterrain.domain.entity.Tile;
 import com.example.animalwarterrain.kafka.ResultTerrainProducer;
 import com.example.animalwarterrain.repository.TerrainRepository;
-import com.example.animalwarterrain.repository.TileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.support.converter.JsonMessageConverter;
-import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -28,66 +19,88 @@ public class TerrainService {
 
     private final ResultTerrainProducer resultTerrainProducer;
     private final TerrainRepository terrainRepository;
-    private final TileRepository tileRepository;
 
 
-    public void generateRandomTerrain(UUID userUUID) {
-        Random rand = new Random();
-        int land = rand.nextInt(100);
-        int sea = rand.nextInt(100 - land);
-        int mountain = 100 - land - sea;
-        LandForm determinedLandForm = determineLandForm(land, sea, mountain);
+    // 회원가입한 사람 최초로 맵 생성
+    @Transactional
+    public void firstTerrain(UUID userUUID) {
+        Terrain terrain = Terrain.builder()
+                .userUUID(userUUID)
+                .dominantLandForm(null)
+                .tiles(new ArrayList<>())
+                .build();
 
-        Terrain terrain = Terrain.buildTerrain(userUUID, land, sea, mountain, determinedLandForm);
-
-        terrain = terrainRepository.save(terrain);
-
-        resultTerrainProducer.sendTerrainResponseDto(new TerrainResponseDto(userUUID, terrain.getLandForm()));
-
-        List<Tile> tiles = new ArrayList<>();
-        //디폴트 타일 10*10  100개 세팅
-        for(int i=0;i<10;i++){
-            for(int j=0;j<10;j++){
-                tiles.add(Tile.builder()
-                        .x(i)
-                        .y(j)
-                        .terrain(terrain)
-                        .build());
-            }
-        }
-        tileRepository.saveAll(tiles);
-    }
-
-    private LandForm determineLandForm(int land, int sea, int mountain) {
-        if (land >= sea && land >= mountain) {
-            return LandForm.LAND;
-        } else if (sea > land && sea >= mountain) {
-            return LandForm.SEA;
-        } else {
-            return LandForm.MOUNTAIN;
-        }
-    }
-
-    public List<Tile> batchTerrain(PlaceRequest placeRequest) {
-
-        // 데이터 정렬이  X 0  y 0~10
-        //        X 1  y 0~10 이라고 가정
-        List<Tile> tiles = tileRepository.findTilesByUUID(placeRequest.uuid())
-                .orElseThrow(()->new RuntimeException("No UUID or Tile  Error"));
-
-        // 데이터 정렬이  X 0  y 0~10
-        //        X 1  y 0~10 이라고 가정
-        List<TileInfo> tileInfos = placeRequest.tileInfos();
-
-        for(int i=0;i<tileInfos.size();i++){
-            Tile tile = tiles.get(i);
-            TileInfo tileInfo = tileInfos.get(i);
-
-            tile.updateTile(tileInfo.buildType(),tileInfo.typeId());
+        Map<LandForm, Long> landFormCount = new HashMap<>();
+        for (LandForm lf : LandForm.values()) {
+            landFormCount.put(lf, 0L);
         }
 
+        for (int i = 0; i < 100; i++) {
+            LandForm randomLandForm = LandForm.values()[new Random().nextInt(LandForm.values().length)];
+            Tile tile = Tile.builder()
+                    .terrain(terrain)
+                    .landForm(randomLandForm)
+                    .x(i % 10)
+                    .y(i / 10)
+                    .build();
 
-        return tiles;
+            terrain.getTiles().add(tile);
 
+            landFormCount.put(randomLandForm, landFormCount.get(randomLandForm) + 1);
+        }
+
+        LandForm dominantLandForm = landFormCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .get()
+                .getKey();
+        terrain.updateDominantLandForm(dominantLandForm);
+
+        // CascadeType.ALL로 인해 Tile도 같이 저장됨
+        terrainRepository.save(terrain);
+
+        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm);
+
+        resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
+
+
+
+    @Transactional
+    public void updateTerrain(UUID userUUID) {
+        Terrain terrain = terrainRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new RuntimeException("해당하는 유저의 Terrain이 없습니다"));
+
+
+        Map<LandForm, Long> landFormCount = resetLandFormCount();
+
+
+        Random random = new Random();
+        for (Tile tile : terrain.getTiles()) {
+            LandForm newLandForm = LandForm.values()[random.nextInt(LandForm.values().length)];
+            tile.updateLandForm(newLandForm);
+            landFormCount.put(newLandForm, landFormCount.get(newLandForm) + 1);
+        }
+
+        LandForm dominantLandForm = landFormCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .get()
+                .getKey();
+        terrain.updateDominantLandForm(dominantLandForm);
+
+        terrainRepository.save(terrain);
+
+        // TerrainResponseDto 객체를 생성하여 Kafka를 통해 전송합니다.
+        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm);
+        resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
+    }
+
+    private Map<LandForm, Long> resetLandFormCount() {
+        // EnumMap은 enum 키를 사용할 때 최적화된 Map 구현
+        Map<LandForm, Long> landFormCount = new EnumMap<>(LandForm.class);
+        for (LandForm form : LandForm.values()) {
+            landFormCount.put(form, 0L);
+        }
+        return landFormCount;
+    }
+
 }

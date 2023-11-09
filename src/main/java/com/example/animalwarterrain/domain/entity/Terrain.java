@@ -8,34 +8,25 @@ import java.util.UUID;
 
 @Entity
 @Table(name="terrains")
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Terrain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long terrainId;
+    private long id;
 
     private UUID userUUID;
-    private int sea;
-    private int mountain;
-    private int land;
-//
-//    @OneToMany(mappedBy = "terrain")
-//    private List<Tile> tiles;
 
-    @Enumerated(value = EnumType.STRING)
-    private LandForm landForm;
+    @Enumerated(EnumType.STRING)
+    private LandForm dominantLandForm;
 
-    public static Terrain buildTerrain(UUID userUUID, int land, int sea, int mountain, LandForm landForm) {
-        return Terrain.builder().userUUID(userUUID)
-                .land(land)
-                .sea(sea)
-                .mountain(mountain)
-                .landForm(landForm)
-                .build();
+    @OneToMany(mappedBy = "terrain", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tile> tiles;
+
+
+    public void updateDominantLandForm(LandForm dominantLandForm) {
+        this.dominantLandForm = dominantLandForm;
     }
-
 }
