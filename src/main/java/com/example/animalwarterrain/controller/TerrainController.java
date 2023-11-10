@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 
 @RestController
@@ -21,12 +20,7 @@ public class TerrainController {
 
     @PostMapping("/")
     public void generateRandomTerrain(@RequestBody TerrainRequestDto request) {
-        terrainService.generateRandomTerrain(request.uuid());
-    }
-
-    @PostMapping("/batch")
-    public List<Tile> batchTerrain(@RequestBody PlaceRequest placeRequest){
-        return terrainService.batchTerrain(placeRequest);
+        terrainService.firstTerrain(request.uuid());
     }
 
 }

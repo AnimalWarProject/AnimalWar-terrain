@@ -28,12 +28,14 @@ public class TerrainService {
                 .userUUID(userUUID)
                 .dominantLandForm(null)
                 .tiles(new ArrayList<>())
+                .sea(0)
+                .land(0)
+                .mountain(0)
                 .build();
 
-        Map<LandForm, Long> landFormCount = new HashMap<>();
-        for (LandForm lf : LandForm.values()) {
-            landFormCount.put(lf, 0L);
-        }
+        int seaCount = 0;
+        int landCount = 0;
+        int mountainCount = 0;
 
         for (int i = 0; i < 100; i++) {
             LandForm randomLandForm = LandForm.values()[new Random().nextInt(LandForm.values().length)];
@@ -46,22 +48,37 @@ public class TerrainService {
 
             terrain.getTiles().add(tile);
 
-            landFormCount.put(randomLandForm, landFormCount.get(randomLandForm) + 1);
+            if (randomLandForm == LandForm.SEA) {
+                seaCount++;
+            } else if (randomLandForm == LandForm.LAND) {
+                landCount++;
+            } else if (randomLandForm == LandForm.MOUNTAIN) {
+                mountainCount++;
+            }
         }
 
-        LandForm dominantLandForm = landFormCount.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .get()
-                .getKey();
+        LandForm dominantLandForm;
+        if (seaCount >= landCount && seaCount >= mountainCount) {
+            dominantLandForm = LandForm.SEA;
+        } else if (landCount >= seaCount && landCount >= mountainCount) {
+            dominantLandForm = LandForm.LAND;
+        } else {
+            dominantLandForm = LandForm.MOUNTAIN;
+        }
+
         terrain.updateDominantLandForm(dominantLandForm);
+        terrain.updateSeaCount(seaCount);
+        terrain.updateLandCount(landCount);
+        terrain.updateMountainCount(mountainCount);
 
         // CascadeType.ALL로 인해 Tile도 같이 저장됨
         terrainRepository.save(terrain);
 
-        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm);
+        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm, seaCount, landCount, mountainCount);
 
         resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
+
 
 
 
@@ -70,15 +87,26 @@ public class TerrainService {
         Terrain terrain = terrainRepository.findByUserUUID(userUUID)
                 .orElseThrow(() -> new RuntimeException("해당하는 유저의 Terrain이 없습니다"));
 
-
         Map<LandForm, Long> landFormCount = resetLandFormCount();
 
-
         Random random = new Random();
+        int seaCount = 0;
+        int mountainCount = 0;
+        int landCount = 0;
+
         for (Tile tile : terrain.getTiles()) {
             LandForm newLandForm = LandForm.values()[random.nextInt(LandForm.values().length)];
             tile.updateLandForm(newLandForm);
             landFormCount.put(newLandForm, landFormCount.get(newLandForm) + 1);
+
+            // 해당 타일의 랜드폼에 따라 sea, mountain, land 카운트를 증가시킴
+            if (newLandForm == LandForm.SEA) {
+                seaCount++;
+            } else if (newLandForm == LandForm.MOUNTAIN) {
+                mountainCount++;
+            } else if (newLandForm == LandForm.LAND) {
+                landCount++;
+            }
         }
 
         LandForm dominantLandForm = landFormCount.entrySet().stream()
@@ -87,10 +115,15 @@ public class TerrainService {
                 .getKey();
         terrain.updateDominantLandForm(dominantLandForm);
 
+        // sea, mountain, land 값을 업데이트
+        terrain.updateSeaCount(seaCount);
+        terrain.updateMountainCount(mountainCount);
+        terrain.updateLandCount(landCount);
+
         terrainRepository.save(terrain);
 
         // TerrainResponseDto 객체를 생성하여 Kafka를 통해 전송합니다.
-        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm);
+        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm, seaCount, landCount, mountainCount);
         resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
 
