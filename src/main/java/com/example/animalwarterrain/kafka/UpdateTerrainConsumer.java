@@ -1,5 +1,6 @@
 package com.example.animalwarterrain.kafka;
 
+import com.example.animalwarterrain.domain.dto.TerrainRequestDto;
 import com.example.animalwarterrain.service.TerrainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,8 +14,8 @@ public class UpdateTerrainConsumer {
 
     private final TerrainService terrainService;
 
-    @KafkaListener(topics = "terrain-request-topic", groupId = "animalwar-consumer")
-    public void consumeTerrainRequest(UUID userUUID) {
-        terrainService.updateTerrain(userUUID);
+    @KafkaListener(topics = "user-terrain-request-topic", groupId = "animalwar-consumer")
+    public void consumeTerrainRequest(TerrainRequestDto terrainRequestDto) {
+        terrainService.updateTerrain(terrainRequestDto.getUserUUID());
     }
 }

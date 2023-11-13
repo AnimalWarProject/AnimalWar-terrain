@@ -20,8 +20,8 @@ public class TerrainController {
    private final TerrainService terrainService;
 
     @PostMapping("/")
-    public void generateRandomTerrain(@RequestBody TerrainRequestDto request) {
-        terrainService.firstTerrain(request.uuid());
+    public void generateRandomTerrain(@RequestBody TerrainRequestDto terrainRequestDto) {
+        terrainService.firstTerrain(terrainRequestDto.getUserUUID());
     }
 
     @GetMapping("/{userUUID}")

@@ -41,7 +41,7 @@ public class Terrain {
     public void updateLandCount(int land){
         this.land = land;
     }
-    public void updateMountainCount(int Mountain){
+    public void updateMountainCount(int mountain){
         this.mountain = mountain;
     }
 
