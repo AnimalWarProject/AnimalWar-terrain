@@ -136,4 +136,10 @@ public class TerrainService {
         return landFormCount;
     }
 
+    // 상대 타일 정보 검색
+    public List<Tile> getTilesByUserUUID(UUID userUUID) {
+        return terrainRepository.findByUserUUID(userUUID).map(Terrain::getTiles)
+                .orElseThrow(() -> new NoSuchElementException("해당 사용자 UUID에 대한 타일 정보가 없습니다."));
+    }
+
 }
