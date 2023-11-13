@@ -2,13 +2,14 @@ package com.example.animalwarterrain.controller;
 
 
 import com.example.animalwarterrain.domain.dto.TerrainRequestDto;
+import com.example.animalwarterrain.domain.entity.Tile;
 import com.example.animalwarterrain.service.TerrainService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -21,6 +22,12 @@ public class TerrainController {
     @PostMapping("/")
     public void generateRandomTerrain(@RequestBody TerrainRequestDto request) {
         terrainService.firstTerrain(request.uuid());
+    }
+
+    @GetMapping("/{userUUID}")
+    public ResponseEntity<List<Tile>> getTilesByUserUUID(@PathVariable UUID userUUID) {
+        List<Tile> tiles = terrainService.getTilesByUserUUID(userUUID);
+        return ResponseEntity.ok(tiles);
     }
 
 }
