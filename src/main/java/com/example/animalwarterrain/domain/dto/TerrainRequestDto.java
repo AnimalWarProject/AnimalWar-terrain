@@ -1,8 +1,14 @@
 package com.example.animalwarterrain.domain.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
-public record TerrainRequestDto(
-        UUID uuid
-) {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class TerrainRequestDto {
+    UUID userUUID;
 }

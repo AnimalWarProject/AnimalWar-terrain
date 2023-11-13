@@ -11,7 +11,9 @@ public class ResultTerrainProducer {
     private final KafkaTemplate<String, TerrainResponseDto> kafkaTemplate;
 
     public void sendTerrainResponseDto(TerrainResponseDto terrainResponseDto) {
-        kafkaTemplate.send("terrain-result-topic", terrainResponseDto);
+        kafkaTemplate.send(TopicConfig.resultTerrain, terrainResponseDto.getUserUUID().toString(), terrainResponseDto);
     }
+
+
 
 }

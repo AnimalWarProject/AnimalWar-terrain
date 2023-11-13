@@ -13,8 +13,12 @@ import java.util.Map;
 @Configuration
 public class TopicConfig {
 
+    public final static String resultTerrain = "terrain-response-topic";
+
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
+
+
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -25,7 +29,7 @@ public class TopicConfig {
 
     @Bean
     public NewTopic terrainRequestTopic() {
-        return new NewTopic("terrain-request-topic", 1, (short) 1);
+        return new NewTopic(resultTerrain, 1, (short) 1);
 
     }
 }
