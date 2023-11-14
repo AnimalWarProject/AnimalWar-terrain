@@ -74,7 +74,7 @@ public class TerrainService {
         // CascadeType.ALL로 인해 Tile도 같이 저장됨
         terrainRepository.save(terrain);
 
-        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm, seaCount, landCount, mountainCount);
+        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(terrain.getUserUUID(), terrain.getDominantLandForm(), terrain.getSea(), terrain.getLand(), terrain.getMountain());
 
         resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
@@ -123,7 +123,7 @@ public class TerrainService {
         terrainRepository.save(terrain);
 
         // TerrainResponseDto 객체를 생성하여 Kafka를 통해 전송합니다.
-        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(userUUID, dominantLandForm, seaCount, landCount, mountainCount);
+        TerrainResponseDto terrainResponseDto = new TerrainResponseDto(terrain.getUserUUID(), terrain.getDominantLandForm(), terrain.getSea(), terrain.getLand(), terrain.getMountain());
         resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
 

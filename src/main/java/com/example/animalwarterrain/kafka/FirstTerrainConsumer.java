@@ -14,7 +14,7 @@ public class FirstTerrainConsumer {
 
     private final TerrainService terrainService;
 
-    @KafkaListener(topics = "first-terrain-request-topic", groupId = "animalwar-terrain-group")
+    @KafkaListener(topics = "first-terrain-request-topic", groupId = "User")
     public void consumeFirstTerrainRequest(TerrainRequestDto terrainRequestDto) {
         terrainService.firstTerrain(terrainRequestDto.getUserUUID());
     }
