@@ -2,8 +2,6 @@ server:
   port: 0
 spring:
   jackson:
-    serialization:
-      fail-on-empty-beans: false
   application:
     name: terrain-service
   datasource:

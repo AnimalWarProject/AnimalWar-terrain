@@ -6,15 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class UpdateTerrainConsumer {
 
     private final TerrainService terrainService;
 
-    @KafkaListener(topics = "user-terrain-request-topic", groupId = "animalwar-consumer")
+    @KafkaListener(topics = "user-terrain-request-topic", groupId = "User")
     public void consumeTerrainRequest(TerrainRequestDto terrainRequestDto) {
         terrainService.updateTerrain(terrainRequestDto.getUserUUID());
     }

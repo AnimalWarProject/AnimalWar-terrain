@@ -11,10 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TerrainResponseDto {
-        UUID userUUID;
-        LandForm dominantLandForm;
-        int sea;
-        int land;
-        int mountain;
-
+        private UUID userUUID;
+        private LandForm dominantlandForm;
+        private int sea;
+        private int land;
+        private int mountain;
 }
