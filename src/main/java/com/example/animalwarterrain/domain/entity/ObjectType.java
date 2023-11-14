@@ -1,6 +1,6 @@
 package com.example.animalwarterrain.domain.entity;
 
-public enum BuildType {
+public enum ObjectType {
 
     ANIMAL,BUILDING
 }
