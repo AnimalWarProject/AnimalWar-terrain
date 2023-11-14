@@ -28,9 +28,9 @@ public class Tile {
     private int y;
 
     @Enumerated(EnumType.STRING)
-    private BuildType type;
+    private ObjectType objectType;
 
-    private Long typeId;
+    private Long objectId;
 
 
     public void updateLandForm(LandForm landForm) {

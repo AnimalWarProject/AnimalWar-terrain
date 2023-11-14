@@ -4,6 +4,7 @@ import com.example.animalwarterrain.domain.dto.TerrainResponseDto;
 import com.example.animalwarterrain.domain.entity.LandForm;
 import com.example.animalwarterrain.domain.entity.Terrain;
 import com.example.animalwarterrain.domain.entity.Tile;
+import com.example.animalwarterrain.domain.response.TileResponse;
 import com.example.animalwarterrain.kafka.ResultTerrainProducer;
 import com.example.animalwarterrain.repository.TerrainRepository;
 import lombok.RequiredArgsConstructor;
@@ -140,6 +141,18 @@ public class TerrainService {
     public List<Tile> getTilesByUserUUID(UUID userUUID) {
         return terrainRepository.findByUserUUID(userUUID).map(Terrain::getTiles)
                 .orElseThrow(() -> new NoSuchElementException("해당 사용자 UUID에 대한 타일 정보가 없습니다."));
+    }
+
+
+    // 내 타일 정보
+    public List<TileResponse> getMyTile(UUID userUUID) {
+        List<Tile> tiles = getTilesByUserUUID(userUUID);
+        List<TileResponse> tileResponses = new ArrayList<>();
+        for (Tile tile : tiles) {
+            TileResponse tileResponse = new TileResponse(tile.getId(), tile.getLandForm(), tile.getX(), tile.getY(), tile.getObjectType(), tile.getObjectId());
+            tileResponses.add(tileResponse);
+        }
+        return tileResponses;
     }
 
 }
