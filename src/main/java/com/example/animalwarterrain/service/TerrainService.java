@@ -4,9 +4,11 @@ import com.example.animalwarterrain.domain.dto.TerrainResponseDto;
 import com.example.animalwarterrain.domain.entity.LandForm;
 import com.example.animalwarterrain.domain.entity.Terrain;
 import com.example.animalwarterrain.domain.entity.Tile;
+import com.example.animalwarterrain.domain.request.PlaceItemRequest;
 import com.example.animalwarterrain.domain.response.TileResponse;
 import com.example.animalwarterrain.kafka.ResultTerrainProducer;
 import com.example.animalwarterrain.repository.TerrainRepository;
+import com.example.animalwarterrain.repository.TileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ public class TerrainService {
 
     private final ResultTerrainProducer resultTerrainProducer;
     private final TerrainRepository terrainRepository;
+    private final TileRepository tileRepository;
 
 
     // 회원가입한 사람 최초로 맵 생성
@@ -155,4 +158,15 @@ public class TerrainService {
         return tileResponses;
     }
 
+
+    @Transactional
+    public void placeItems(List<PlaceItemRequest> requests) {
+        for (PlaceItemRequest request : requests) {
+            Tile tile = tileRepository.findById(request.getTileId()).orElseThrow(()
+                    -> new IllegalArgumentException("Invalid tile ID"));
+            tile.placeObject(request.getObjectType(), request.getObjectId());
+            tileRepository.save(tile);
+        }
+
 }
+    }
