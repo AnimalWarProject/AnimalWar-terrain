@@ -36,6 +36,12 @@ public class Tile {
     public void updateLandForm(LandForm landForm) {
         this.landForm = landForm;
     }
+
+
+    public void placeObject(ObjectType objectType, Long objectId) {
+        this.objectType = objectType;
+        this.objectId = objectId;
+    }
 }
 
 

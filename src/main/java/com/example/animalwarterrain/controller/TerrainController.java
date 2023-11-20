@@ -5,6 +5,7 @@ import com.example.animalwarterrain.config.JwtService;
 import com.example.animalwarterrain.config.TokenInfo;
 import com.example.animalwarterrain.domain.dto.TerrainRequestDto;
 import com.example.animalwarterrain.domain.entity.Tile;
+import com.example.animalwarterrain.domain.request.PlaceItemRequest;
 import com.example.animalwarterrain.domain.response.TileResponse;
 import com.example.animalwarterrain.service.TerrainService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,12 @@ public class TerrainController {
         UUID userUUID = UUID.fromString(tokenInfo.getUserUUID());
         List<TileResponse> tileResponses = terrainService.getMyTile(userUUID);
         return ResponseEntity.ok(tileResponses);
+    }
+
+    @PostMapping("/placeItems")
+    public ResponseEntity<?> placeItems(@RequestBody List<PlaceItemRequest> requests) {
+        terrainService.placeItems(requests);
+        return ResponseEntity.ok().build();
     }
 
 }
