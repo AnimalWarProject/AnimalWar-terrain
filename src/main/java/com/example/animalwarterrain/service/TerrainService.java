@@ -2,6 +2,7 @@ package com.example.animalwarterrain.service;
 
 import com.example.animalwarterrain.domain.dto.TerrainResponseDto;
 import com.example.animalwarterrain.domain.entity.LandForm;
+import com.example.animalwarterrain.domain.entity.ObjectType;
 import com.example.animalwarterrain.domain.entity.Terrain;
 import com.example.animalwarterrain.domain.entity.Tile;
 import com.example.animalwarterrain.domain.request.PlaceItemRequest;
@@ -160,13 +161,35 @@ public class TerrainService {
 
 
     @Transactional
-    public void placeItems(List<PlaceItemRequest> requests) {
-        for (PlaceItemRequest request : requests) {
-            Tile tile = tileRepository.findById(request.getTileId()).orElseThrow(()
-                    -> new IllegalArgumentException("Invalid tile ID"));
-            tile.placeObject(request.getObjectType(), request.getObjectId());
-            tileRepository.save(tile);
-        }
+    public void placeItems(UUID userUUID, List<PlaceItemRequest> requests) {
+        Terrain terrain = terrainRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new IllegalArgumentException("Terrain not found for user UUID: " + userUUID));
 
-}
+        for (PlaceItemRequest request : requests) {
+            Tile tile = terrain.getTiles().stream()
+                    .filter(t -> t.getId().equals(request.getTileId()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid tile ID: " + request.getTileId()));
+
+            tile.placeObject(request.getObjectType(), request.getObjectId());
+        }
+        terrainRepository.save(terrain);
+         }
+
+
+    @Transactional
+    public void removeItems(UUID userUUID, List<Long> tileIds) {
+        Terrain terrain = terrainRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new IllegalArgumentException("Terrain not found for user UUID: " + userUUID));
+
+        for (Long tileId : tileIds) {
+            Tile tile = terrain.getTiles().stream()
+                    .filter(t -> t.getId().equals(tileId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid tile ID: " + tileId));
+
+            tile.removeObject(); // Tile 클래스에 객체를 제거하는 로직 구현 필요
+        }
+        terrainRepository.save(terrain);
+    }
     }

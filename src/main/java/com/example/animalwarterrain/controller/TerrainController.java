@@ -45,9 +45,23 @@ public class TerrainController {
     }
 
     @PostMapping("/placeItems")
-    public ResponseEntity<?> placeItems(@RequestBody List<PlaceItemRequest> requests) {
-        terrainService.placeItems(requests);
+    public ResponseEntity<?> placeItems(@RequestHeader("Authorization") String accessToken,
+                                        @RequestBody List<PlaceItemRequest> requests) {
+        TokenInfo tokenInfo = jwtService.parseAccessToken(accessToken.replace("Bearer ", ""));
+        UUID userUUID = UUID.fromString(tokenInfo.getUserUUID());
+        terrainService.placeItems(userUUID, requests);
         return ResponseEntity.ok().build();
     }
+
+
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeItems(@RequestHeader("Authorization") String accessToken,
+                                         @RequestBody List<Long> tileIds) {
+        TokenInfo tokenInfo = jwtService.parseAccessToken(accessToken.replace("Bearer ", ""));
+        UUID userUUID = UUID.fromString(tokenInfo.getUserUUID());
+        terrainService.removeItems(userUUID, tileIds);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

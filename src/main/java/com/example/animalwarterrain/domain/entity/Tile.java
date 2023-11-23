@@ -42,6 +42,12 @@ public class Tile {
         this.objectType = objectType;
         this.objectId = objectId;
     }
+
+    public void removeObject() {
+        // 객체를 제거하는 로직 구현
+        this.objectType = null;
+        this.objectId = null;
+    }
 }
 
 
