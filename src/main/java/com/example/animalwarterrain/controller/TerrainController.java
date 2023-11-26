@@ -5,7 +5,7 @@ import com.example.animalwarterrain.config.JwtService;
 import com.example.animalwarterrain.config.TokenInfo;
 import com.example.animalwarterrain.domain.dto.TerrainRequestDto;
 import com.example.animalwarterrain.domain.entity.Tile;
-import com.example.animalwarterrain.domain.request.PlaceItemRequest;
+import com.example.animalwarterrain.domain.request.UpdatePlaceRequest;
 import com.example.animalwarterrain.domain.response.TileResponse;
 import com.example.animalwarterrain.service.TerrainService;
 import lombok.RequiredArgsConstructor;
@@ -44,22 +44,21 @@ public class TerrainController {
         return ResponseEntity.ok(tileResponses);
     }
 
-    @PostMapping("/placeItems")
-    public ResponseEntity<?> placeItems(@RequestHeader("Authorization") String accessToken,
-                                        @RequestBody List<PlaceItemRequest> requests) {
+    @PostMapping("/place")
+    public ResponseEntity<?> updateTerrain(@RequestHeader("Authorization") String accessToken,
+                                           @RequestBody UpdatePlaceRequest updatePlaceRequest) {
         TokenInfo tokenInfo = jwtService.parseAccessToken(accessToken.replace("Bearer ", ""));
         UUID userUUID = UUID.fromString(tokenInfo.getUserUUID());
-        terrainService.placeItems(userUUID, requests);
+        terrainService.placeUpdate(userUUID, updatePlaceRequest);
         return ResponseEntity.ok().build();
     }
 
-
     @PostMapping("/remove")
-    public ResponseEntity<?> removeItems(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<?> removeTiles(@RequestHeader("Authorization") String accessToken,
                                          @RequestBody List<Long> tileIds) {
         TokenInfo tokenInfo = jwtService.parseAccessToken(accessToken.replace("Bearer ", ""));
         UUID userUUID = UUID.fromString(tokenInfo.getUserUUID());
-        terrainService.removeItems(userUUID, tileIds);
+        terrainService.removeTiles(userUUID, tileIds);
         return ResponseEntity.ok().build();
     }
 
