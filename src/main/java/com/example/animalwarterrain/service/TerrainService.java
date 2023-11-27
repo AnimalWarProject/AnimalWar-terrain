@@ -131,6 +131,7 @@ public class TerrainService {
         resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
 
+
     private Map<LandForm, Long> resetLandFormCount() {
         // EnumMap은 enum 키를 사용할 때 최적화된 Map 구현
         Map<LandForm, Long> landFormCount = new EnumMap<>(LandForm.class);
