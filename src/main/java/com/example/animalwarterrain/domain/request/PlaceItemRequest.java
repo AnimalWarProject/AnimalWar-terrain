@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class PlaceItemRequest {
-    private Long tileId;    // 아이템을 배치할 타일 ID
-    private ObjectType objectType;  // 배치할 아이템의 타입
-    private Long objectId;  // 배치할 아이템의 ID
+    private Long tileId;
+    private ObjectType objectType;
+    private Long objectId;
 
 }

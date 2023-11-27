@@ -5,10 +5,10 @@ import com.example.animalwarterrain.domain.entity.LandForm;
 import com.example.animalwarterrain.domain.entity.Terrain;
 import com.example.animalwarterrain.domain.entity.Tile;
 import com.example.animalwarterrain.domain.request.PlaceItemRequest;
+import com.example.animalwarterrain.domain.request.UpdatePlaceRequest;
 import com.example.animalwarterrain.domain.response.TileResponse;
 import com.example.animalwarterrain.kafka.ResultTerrainProducer;
 import com.example.animalwarterrain.repository.TerrainRepository;
-import com.example.animalwarterrain.repository.TileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class TerrainService {
 
     private final ResultTerrainProducer resultTerrainProducer;
     private final TerrainRepository terrainRepository;
-    private final TileRepository tileRepository;
+
 
 
     // 회원가입한 사람 최초로 맵 생성
@@ -131,6 +131,7 @@ public class TerrainService {
         resultTerrainProducer.sendTerrainResponseDto(terrainResponseDto);
     }
 
+
     private Map<LandForm, Long> resetLandFormCount() {
         // EnumMap은 enum 키를 사용할 때 최적화된 Map 구현
         Map<LandForm, Long> landFormCount = new EnumMap<>(LandForm.class);
@@ -160,13 +161,36 @@ public class TerrainService {
 
 
     @Transactional
-    public void placeItems(List<PlaceItemRequest> requests) {
-        for (PlaceItemRequest request : requests) {
-            Tile tile = tileRepository.findById(request.getTileId()).orElseThrow(()
-                    -> new IllegalArgumentException("Invalid tile ID"));
-            tile.placeObject(request.getObjectType(), request.getObjectId());
-            tileRepository.save(tile);
+    public void placeUpdate(UUID userUUID, UpdatePlaceRequest updatePlaceRequest) {
+        Terrain terrain = terrainRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new IllegalArgumentException("Terrain not found for user UUID: " + userUUID));
+
+        for (PlaceItemRequest placeRequest : updatePlaceRequest.getPlaceItems()) {
+            Tile tile = findTileById(terrain, placeRequest.getTileId());
+            tile.placeObject(placeRequest.getObjectType(), placeRequest.getObjectId());
         }
 
-}
+        terrainRepository.save(terrain);
+    }
+
+
+    @Transactional
+    public void removeTiles(UUID userUUID, List<Long> tileIds) {
+        Terrain terrain = terrainRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new IllegalArgumentException("Terrain not found for user UUID: " + userUUID));
+
+        for (Long tileId : tileIds) {
+            Tile tile = findTileById(terrain, tileId);
+            tile.removeObject();
+        }
+
+        terrainRepository.save(terrain);
+    }
+
+    private Tile findTileById(Terrain terrain, Long tileId) {
+        return terrain.getTiles().stream()
+                .filter(t -> t.getId().equals(tileId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid tile ID: " + tileId));
+    }
     }
